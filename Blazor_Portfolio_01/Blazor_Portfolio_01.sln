@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor_Portfolio_01.Server", "Blazor_Portfolio_01\Server\Blazor_Portfolio_01.Server.csproj", "{CFA68619-43ED-465A-9914-95F1DD67255F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor_Portfolio_01.Server", "Blazor_Portfolio_01\Server\Blazor_Portfolio_01.Server.csproj", "{CFA68619-43ED-465A-9914-95F1DD67255F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor_Portfolio_01.Client", "Blazor_Portfolio_01\Client\Blazor_Portfolio_01.Client.csproj", "{E793DADE-66A1-4D45-BDEF-ECF18761FAFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor_Portfolio_01.Client", "Blazor_Portfolio_01\Client\Blazor_Portfolio_01.Client.csproj", "{E793DADE-66A1-4D45-BDEF-ECF18761FAFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor_Portfolio_01.Shared", "Blazor_Portfolio_01\Shared\Blazor_Portfolio_01.Shared.csproj", "{64A9860A-8968-450B-AB4C-7B1CF49EC689}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor_Portfolio_01.Shared", "Blazor_Portfolio_01\Shared\Blazor_Portfolio_01.Shared.csproj", "{64A9860A-8968-450B-AB4C-7B1CF49EC689}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
