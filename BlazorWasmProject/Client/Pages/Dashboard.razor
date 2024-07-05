@@ -1,0 +1,298 @@
+﻿@page "/"
+
+@inject HttpClient Http
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+
+@using BlazorWasmProject.Shared;
+@using System.Linq;
+
+<PageTitle>G.P.A | Main</PageTitle>
+
+@if (isContentLoaded)
+{
+    <h3>Dashboard</h3>
+
+    <div class="row my-1">
+        <div class="col-sm-12 col-lg-12">
+            <RadzenCard>
+                <RadzenLabel Text="Color scheme:" />
+                <RadzenDropDown Data="@colorSchemes" @bind-Value="@colorScheme" />
+            </RadzenCard>
+        </div>
+    </div>
+    <div class="row my-5">
+        <div class="col-sm-12 col-lg-8">
+            <RadzenText TextStyle="TextStyle.H6">행정동 인구수 Top10</RadzenText>
+            <RadzenCard>
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenButton Icon="open_in_new" Click=@ShowInlineDialog />
+                    <RadzenButton Icon="build" Click=@ShowMinMaxDialog />
+                </RadzenStack>
+
+                <RadzenChart ColorScheme="@colorScheme">
+                    <RadzenLineSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.TotalPopulation).Take(10)"
+                                      CategoryProperty="AdministrativeAgency"
+                                      ValueProperty="TotalPopulation"
+                                      Title="Total Popluation(Line)"
+                                      LineType="LineType.Dashed">
+                        <RadzenMarkers MarkerType="MarkerType.Circle" />
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                    </RadzenLineSeries>
+                    <RadzenColumnSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.TotalPopulation).Take(10)"
+                                        CategoryProperty="AdministrativeAgency"
+                                        ValueProperty="TotalPopulation"
+                                        Title="Total Popluation(Column)" />
+                    <RadzenLegend Position="LegendPosition.Bottom" />
+                    <RadzenColumnOptions Radius="5" Width="50" />
+                    <RadzenCategoryAxis Padding="5" />
+                    <RadzenValueAxis Min="@min" Max="@max" Step="10000">
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="Total Population" />
+                    </RadzenValueAxis>
+                </RadzenChart>
+            </RadzenCard>
+        </div>
+        <div class="col-sm-12 col-lg-4">
+            <RadzenText TextStyle="TextStyle.H6">행정동 인구수 Top10</RadzenText>
+            <RadzenCard>
+                <RadzenChart ColorScheme="@colorScheme">
+                    <RadzenPieSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.TotalPopulation).Take(10)"
+                                     CategoryProperty="AdministrativeAgency"
+                                     ValueProperty="TotalPopulation"
+                                     Title="Total Popluation(Pie)" />
+                </RadzenChart>
+            </RadzenCard>
+        </div>
+    </div>
+    <div class="row my-5">
+        <div class="col-sm-12 col-lg-4">
+            <RadzenText TextStyle="TextStyle.H6">남자 인구수 Top5</RadzenText>
+            <RadzenCard>
+                <RadzenChart ColorScheme="@colorScheme">
+                    <RadzenDonutSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.MalePopulation).Take(5)"
+                                       CategoryProperty="AdministrativeAgency"
+                                       ValueProperty="MalePopulation"
+                                       TotalAngle="180"
+                                       StartAngle="180">
+                        <ChildContent>
+                            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                        </ChildContent>
+                        <TitleTemplate>
+                            <div class="rz-donut-content">
+                                <div>Male Top 5</div>
+                                <div>for 2023</div>
+                            </div>
+                        </TitleTemplate>
+                    </RadzenDonutSeries>
+                </RadzenChart>
+            </RadzenCard>
+        </div>
+        <div class="col-sm-12 col-lg-4">
+            <RadzenText TextStyle="TextStyle.H6">여자 인구수 Top5</RadzenText>
+            <RadzenCard>
+                <RadzenChart ColorScheme="@colorScheme">
+                    <RadzenDonutSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.FemalePopulation).Take(5)"
+                                       CategoryProperty="AdministrativeAgency"
+                                       ValueProperty="FemalePopulation"
+                                       TotalAngle="180"
+                                       StartAngle="180">
+                        <ChildContent>
+                            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                        </ChildContent>
+                        <TitleTemplate>
+                            <div class="rz-donut-content">
+                                <div>Female Top 5</div>
+                                <div>for 2023</div>
+                            </div>
+                        </TitleTemplate>
+                    </RadzenDonutSeries>
+                </RadzenChart>
+            </RadzenCard>
+        </div>
+        <div class="col-sm-12 col-lg-4">
+            <RadzenText TextStyle="TextStyle.H6">성비 인구수 Top5</RadzenText>
+            <RadzenCard>
+                <RadzenChart ColorScheme="@colorScheme">
+                    <RadzenDonutSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.SexRatio).Take(5)"
+                                       CategoryProperty="AdministrativeAgency"
+                                       ValueProperty="SexRatio"
+                                       TotalAngle="180"
+                                       StartAngle="180">
+                        <ChildContent>
+                            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                        </ChildContent>
+                        <TitleTemplate>
+                            <div class="rz-donut-content">
+                                <div>SexRatio Top 5</div>
+                                <div>for 2023</div>
+                            </div>
+                        </TitleTemplate>
+                    </RadzenDonutSeries>
+                </RadzenChart>
+            </RadzenCard>
+        </div>
+    </div>
+    <div class="row my-10">
+        <div class="col-sm-12 col-lg-12">
+            <RadzenText TextStyle="TextStyle.H6">인구통계 Top5 Stack Bar Chart</RadzenText>
+            <RadzenChart Style="height : 400px" ColorScheme="@colorScheme">
+                <RadzenStackedBarSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.TotalPopulation).Take(5)"
+                                        CategoryProperty="AdministrativeAgency"
+                                        ValueProperty="TotalPopulation"
+                                        Title="인구수(계)">
+                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                </RadzenStackedBarSeries>
+                <RadzenStackedBarSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.TotalPopulation).Take(5)"
+                                        CategoryProperty="AdministrativeAgency"
+                                        ValueProperty="MalePopulation"
+                                        Title="남자인구수(계)">
+                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                </RadzenStackedBarSeries>
+                <RadzenStackedBarSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.TotalPopulation).Take(5)"
+                                        CategoryProperty="AdministrativeAgency"
+                                        ValueProperty="FemalePopulation"
+                                        Title="여자인구수(계)">
+                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                </RadzenStackedBarSeries>
+                <RadzenValueAxis>
+                    <RadzenGridLines Visible="true" />
+                    <RadzenAxisTitle Text="인구수" />
+                </RadzenValueAxis>
+                <RadzenBarOptions Radius="5" Height="40" />
+            </RadzenChart>
+        </div>
+    </div>
+    <div class="row my-10">
+        <div class="col-sm-12 col-lg-12">
+            <RadzenText TextStyle="TextStyle.H6">Seoul Gangnam-gu Map</RadzenText>
+            <RadzenGoogleMap @ref=map Style="height : 400px" Center=@(new GoogleMapPosition() {Lat=37.4964, Lng=127.0376}) MarkerClick=@OnMarkerClick>
+                <Markers>
+                    <RadzenGoogleMapMarker Title="Seoul" Label="Gangnam-gu" Position=@(new GoogleMapPosition() {Lat=37.4964, Lng=127.0376}) />
+                </Markers>
+            </RadzenGoogleMap>
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center pt-3" style="color: purple; font-size: 16pt">
+        Loading...
+    </div>
+    <div class="text-center mt-3">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+              style="font-size: 16pt; width: 36px; height: 36px; color: purple" />
+    </div>
+}
+@code {
+    private int min = 0;
+
+    private int max = 80000;
+
+    private bool isContentLoaded = false;
+
+    private RadzenGoogleMap? map = new RadzenGoogleMap();
+
+    private bool showDataLabels = true;
+
+    private IEnumerable<ColorScheme> colorSchemes = Enum.GetValues(typeof(ColorScheme)).Cast<ColorScheme>();
+
+    private ColorScheme colorScheme = ColorScheme.Palette;
+
+    private IEnumerable<GangnamguPopulation>? gangnamguPopulations = new List<GangnamguPopulation>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        this.gangnamguPopulations = await Http.GetFromJsonAsync<List<GangnamguPopulation>>("api/GangnamguPopulation");
+
+        this.isContentLoaded = true;
+
+        this.ShowNotification();
+    }
+
+    private void ShowNotification()
+    {
+        NotificationMessage message = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Info,
+                    Summary = "잠깐!",
+                    Detail = "설정 확인 하셨나요?" + Environment.NewLine + "[환경 설정] > [설정] > [국가/언어] 확인하세요!",
+                    Duration = 10000,
+                    CloseOnClick = true,
+                    Payload = DateTime.Now,
+                };
+
+        NotificationService.Notify(message);
+    }
+
+    private async Task ShowInlineDialog()
+    {
+        await DialogService.OpenAsync("G.P.A", ds =>
+
+    @<RadzenCard>
+        <RadzenChart Style="height:625px" ColorScheme="@colorScheme">
+            <RadzenLineSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.TotalPopulation).Take(10)"
+                              CategoryProperty="AdministrativeAgency"
+                              ValueProperty="TotalPopulation"
+                              Title="Total Popluation(Line)"
+                              LineType="LineType.Dashed">
+                <RadzenMarkers MarkerType="MarkerType.Circle" />
+                <RadzenSeriesDataLabels Visible="@showDataLabels" />
+            </RadzenLineSeries>
+            <RadzenColumnSeries Data="@gangnamguPopulations?.OrderByDescending(c => c.TotalPopulation).Take(10)"
+                                CategoryProperty="AdministrativeAgency"
+                                ValueProperty="TotalPopulation"
+                                Title="Total Popluation(Column)" />
+            <RadzenLegend Position="LegendPosition.Bottom" />
+            <RadzenColumnOptions Radius="5" Width="50" />
+            <RadzenCategoryAxis Padding="5" />
+            <RadzenValueAxis>
+                <RadzenGridLines Visible="true" />
+                <RadzenAxisTitle Text="Total Population" />
+            </RadzenValueAxis>
+        </RadzenChart>
+    </RadzenCard>
+
+        , new DialogOptions() { Width = "1024px", Height = "768px" });
+    }
+
+    private async Task ShowMinMaxDialog()
+    {
+        await DialogService.OpenAsync("Set Y Axis", ds =>
+
+    @<RadzenCard>
+        <table>
+            <tr>
+                <td>
+                    <RadzenText>Min : </RadzenText>
+                </td>
+                <td>
+                    <RadzenNumeric @bind-Value=@min />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <RadzenText>Max : </RadzenText>
+                </td>
+                <td>
+                    <RadzenNumeric @bind-Value=@max />
+                </td>
+            </tr>
+        </table>
+
+        <hr />
+
+        <RadzenText TextStyle="TextStyle.Subtitle2">입력 후 [Enter]를 눌러주세요!</RadzenText>
+
+    </RadzenCard>
+        , new DialogOptions() { Width = "400px", Height = "300px" });
+    }
+
+    private async Task OnMarkerClick(RadzenGoogleMapMarker marker)
+    {
+
+
+    }
+}
