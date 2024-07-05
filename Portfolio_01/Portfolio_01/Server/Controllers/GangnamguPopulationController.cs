@@ -20,5 +20,11 @@ namespace Portfolio_01.Server.Controllers
         {
             return _IGangnamguPopulation.GetAllGangnamguPopulation();
         }
+
+        [HttpPost]
+        public void Post(GangnamguPopulation data)
+        { 
+            _IGangnamguPopulation.AddGangnamguPopulation(data);
+        }
     }
 }
