@@ -7,7 +7,7 @@
 <RadzenText TextStyle="TextStyle.H4" > 강남구 인구통계 입력 </RadzenText>
 
 <RadzenDataGrid @ref="datagrid" Data="gangnamguPopulations" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                 TItem="GangnamguPopulation" RowCreate="@OnCreateRow">
+                 TItem="GangnamguPopulation" RowCreate="@OnCreateRow" RowUpdate="@OnUpdateRow">
     <Columns>
         <!-- ID -->
         <RadzenDataGridColumn TItem="GangnamguPopulation" Property="Id" Title="ID" Width="120px">
@@ -67,6 +67,15 @@
 
         <!-- Button -->
         <RadzenDataGridColumn TItem="GangnamguPopulation" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="140px">
+            <!-- Update, Delete Button -->
+            <!-- 계속 보여줌 -->
+            <Template Context="data">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => EditRow(data))"></RadzenButton>
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => DeleteRow(data))"></RadzenButton>
+            </Template>
+
+            <!-- 데이터를 클릭 시 보여주게 됨 -->
+            <!-- Data Save Button -->
             <EditTemplate Context="data">
                 <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(data))"></RadzenButton>
             </EditTemplate>
@@ -103,5 +112,21 @@
     {
         var response = await Http.PostAsJsonAsync<GangnamguPopulation>("api/GangnamguPopulation", data);
 
+    }
+
+    private async Task OnUpdateRow(GangnamguPopulation data)
+    {
+        var response = await Http.PutAsJsonAsync<GangnamguPopulation>("api/GangnamguPopulation", data);
+    }
+
+    private async Task EditRow(GangnamguPopulation data)
+    {
+        await datagrid.EditRow(data);
+    }
+
+    private async Task DeleteRow(GangnamguPopulation data)
+    {
+        var targetId = data.Id;
+        var response = await Http.DeleteAsync("api/GangnamguPopulation/" + targetId);
     }
 }

@@ -26,5 +26,17 @@ namespace Portfolio_01.Server.Controllers
         { 
             _IGangnamguPopulation.AddGangnamguPopulation(data);
         }
+
+        [HttpPut]
+        public void Put(GangnamguPopulation data)
+        {
+            _IGangnamguPopulation.UpdateGangnamguPopulation(data);
+        }
+
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+            _IGangnamguPopulation.DeleteGangnamguPopulation(id);
+        }
     }
 }
