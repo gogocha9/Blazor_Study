@@ -7,7 +7,7 @@
 <RadzenText TextStyle="TextStyle.H4" > 강남구 인구통계 입력 </RadzenText>
 
 <RadzenDataGrid @ref="datagrid" Data="gangnamguPopulations" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                 TItem="GangnamguPopulation" RowCreate="@OnCreateRow" RowUpdate="@OnUpdateRow">
+                 TItem="GangnamguPopulation" RowCreate="@OnCreateRow" RowUpdate="@OnUpdateRow" >
     <Columns>
         <!-- ID -->
         <RadzenDataGridColumn TItem="GangnamguPopulation" Property="Id" Title="ID" Width="120px">
@@ -97,6 +97,11 @@
         gangnamguPopulations = await Http.GetFromJsonAsync<List<GangnamguPopulation>>("api/GangnamguPopulation");
     }
 
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     this.gangnamguPopulations = await Http.GetFromJsonAsync<List<GangnamguPopulation>>("api/GangnamguPopulation");
+    // }
+
     private async Task InsertRow()
     {
         var newData = new GangnamguPopulation();
@@ -112,11 +117,20 @@
     {
         var response = await Http.PostAsJsonAsync<GangnamguPopulation>("api/GangnamguPopulation", data);
 
+        // if (response.IsSuccessStatusCode)
+        // {
+        //     await this.OnAfterRenderAsync(false);    
+        // }
     }
 
     private async Task OnUpdateRow(GangnamguPopulation data)
     {
         var response = await Http.PutAsJsonAsync<GangnamguPopulation>("api/GangnamguPopulation", data);
+
+        // if (response.IsSuccessStatusCode)
+        // {
+        //     await this.OnAfterRenderAsync(false);
+        // }
     }
 
     private async Task EditRow(GangnamguPopulation data)
@@ -128,5 +142,10 @@
     {
         var targetId = data.Id;
         var response = await Http.DeleteAsync("api/GangnamguPopulation/" + targetId);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await this.OnAfterRenderAsync(false);
+        }
     }
 }
